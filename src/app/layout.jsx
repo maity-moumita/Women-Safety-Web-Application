@@ -1,5 +1,5 @@
 import "./globals.css";
-import Provider from "@/components/Provider";
+// import Provider from "@/components/Provider";
 
 export const metadata = {
   title: "Alert Angel",
@@ -8,12 +8,12 @@ export const metadata = {
 
 export default function RootLayout({children}){
   return (
-    <Provider>
+    // <Provider>
       <html lang="en">
       <body>
         {children}
       </body>
     </html>
-    </Provider>
+    // </Provider>
   );
 }
