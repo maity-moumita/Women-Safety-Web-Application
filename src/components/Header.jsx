@@ -8,8 +8,10 @@ import { useState } from "react";
 import { TfiAlignRight } from "react-icons/tfi";
 import { IoMdClose } from "react-icons/io";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const Header = () => {
+    const {data: session, status} = useSession();
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
     const pathname = usePathname();

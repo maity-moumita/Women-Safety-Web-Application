@@ -1,19 +1,21 @@
+import Header from "@/components/Header";
 import "./globals.css";
-// import Provider from "@/components/Provider";
+import Provider from "@/components/Provider";
 
 export const metadata = {
   title: "Alert Angel",
   description: "Women Safety Web Application",
 };
 
-export default function RootLayout({children}){
+export default function RootLayout({ children }) {
   return (
-    // <Provider>
+    <Provider>
       <html lang="en">
-      <body>
-        {children}
-      </body>
-    </html>
-    // </Provider>
+        <body>
+          <Header />
+          {children}
+        </body>
+      </html>
+    </Provider>
   );
 }

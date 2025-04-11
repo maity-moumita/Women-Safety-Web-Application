@@ -2,34 +2,37 @@ import { NextResponse } from "next/server";
 import connectToDB from "@/lib/dbConnect";
 import bcrypt from "bcryptjs";
 import User from "@/models/User";
-import jwt from "jsonwebtoken"
 
 export async function POST(req) {
-    try {
-        await connectToDB(); // 🔹 Ensure DB connection before querying
+  try {
+    await connectToDB();
 
-        const body = await req.json();
-        const { email,password } = body;
+    const body = await req.json();
+    const { email, password } = body;
 
-        if (!email || !password) {
-            return NextResponse.json({ message: "Invalid Email or Password" }, { status: 400 });
-        }
-
-        const isUserAlreadyExist = await User.findOne({ email });
-        if (!isUserAlreadyExist) {
-            return NextResponse.json({ msg: "Invalid Email or User do not exist" }, { status: 400 });
-        }
-
-        const isMatched = await bcrypt.compare(password,isUserAlreadyExist.password)
-        const name = isUserAlreadyExist.name;
-        const token = jwt.sign({ name, email }, 'jejflekfnmlkrjgoirsjglknlgk', { expiresIn: "7d" });
-        const response = NextResponse.json({ msg: "User Successfully Login" }, { status: 200 });
-
-        response.cookies.set('token', token, { httpOnly: true, secure: true, sameSite: "strict" });
-
-        return response;
-    } catch (error) {
-        console.error("❌ Signup Error:", error);
-        return NextResponse.json({ msg: `Unexpected Error: ${error.message}` }, { status: 500 });
+    if (!email || !password) {
+      return NextResponse.json({ message: "Invalid Email or Password" }, { status: 400 });
     }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return NextResponse.json({ message: "User does not exist" }, { status: 400 });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
+    }
+
+    // Return user object with necessary fields for NextAuth
+    return NextResponse.json({
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+    }, { status: 200 });
+
+  } catch (error) {
+    console.error("❌ Login Error:", error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
 }

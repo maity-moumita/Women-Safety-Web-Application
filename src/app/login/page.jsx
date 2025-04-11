@@ -1,33 +1,48 @@
 "use client";
 
-import axios from "axios";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const [error, setError] = useState("");
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post("/api/login", { email, password })
-      .then((res) => {
-        console.log(res);
-        if (res.status === 200) {
-          router.push("/dashboard"); // Redirect to dashboard
-        }
-      })
-      .catch((err) => console.log(err));
+    setError("");
+  
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+  
+      if (!result) {
+        setError("Something went wrong. Please try again.");
+        return;
+      }
+  
+      if (result.ok) {
+        router.push("/dashboard");
+      } else {
+        setError(result.error || "Invalid email or password");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred. Please try again later.");
+    }
   };
 
   return (
     <section className="text-gray-600 body-font relative bg-[#edf5ff] h-[100vh]">
       <div className="flex justify-center items-center h-full">
-        <div className="flex flex-col w-[40%] mb-12 mx-auto bg-white px-10 py-20">
-          <h1 className="pb-5 text-center text-black">Login Form</h1>
+        <div className="flex flex-col w-[40%] mb-12 mx-auto bg-white px-10 py-20 rounded-xl shadow-md">
+          <h1 className="pb-5 text-center text-black text-2xl font-bold">Login</h1>
           <form onSubmit={onSubmit}>
             <div className="mb-6">
               <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
@@ -56,19 +71,22 @@ const Login = () => {
                 required
               />
             </div>
+
+            {error && <p className="text-red-600 mb-4">{error}</p>}
+
             <div className="mb-6">
               <h3>
                 Don't have an Account?{" "}
-                <span className="text-blue-900">
-                  <Link href="/signup">Sign Up</Link>
-                </span>
+                <Link href="/sign-up" className="text-blue-900 underline">
+                  Sign Up
+                </Link>
               </h3>
             </div>
             <button
               type="submit"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center"
             >
-              Submit
+              Login
             </button>
           </form>
         </div>

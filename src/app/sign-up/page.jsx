@@ -22,7 +22,7 @@ const Signup = () => {
       })
       .then((res) => {
         console.log(res);
-        if (res.status === 200) {
+        if (res.status === 201) {
           alert("Signup successful! Redirecting to login...");
           router.push("/login"); // go to login after successful signup
         }
@@ -35,8 +35,6 @@ const Signup = () => {
         ) {
           alert("User already exists! Redirecting to login...");
           router.push("/login");
-        } else {
-          alert("Something went wrong. Please try again.");
         }
       });
   };
