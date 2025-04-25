@@ -16,7 +16,7 @@ const ExploreFeature = () => {
                 Discover how our innovative tools and features empower women to stay safe and connected anytime, anywhere.
             </p>
 
-            <Link href="/feature" className="bg-[#771931] p-3 rounded-2xl hover:bg-[#00466f] font-semibold text-lg ">
+            <Link href="/feature-without-login" className="bg-[#771931] p-3 rounded-2xl hover:bg-[#00466f] font-semibold text-lg ">
             Access Features
             </Link>
         </div>

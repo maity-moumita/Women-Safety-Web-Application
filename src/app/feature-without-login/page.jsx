@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-const feature = () => {
+const featureLogin = () => {
     return(
             <div className="min-h-screen bg-black text-white font-sans p-6 flex flex-col items-center justify-center space-y-10">
         
@@ -97,4 +97,4 @@ const feature = () => {
     );
 }
 
-export default feature;
+export default featureLogin;

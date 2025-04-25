@@ -40,6 +40,11 @@ const handler = NextAuth({
   ],
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 🕒 30 days (in seconds)
+    updateAge: 24 * 60 * 60,   // optional: revalidate session every 24 hours
+  },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 🔐 Make sure JWT token also lasts 30 days (in seconds)
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

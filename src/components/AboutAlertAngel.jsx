@@ -56,7 +56,7 @@ const AboutAlertAngel = () => {
                     <p className="text-white text-lg mb-4 leading-relaxed">
                         Want to learn more about our initiatives or become a part of the change?
                     </p>
-                    <Link href="/feature" className="bg-[#771931] p-3 rounded-2xl hover:text-black font-semibold text-lg ">
+                    <Link href="/feature-without-login" className="bg-[#771931] p-3 rounded-2xl hover:text-black font-semibold text-lg ">
                         Access Features
                     </Link>
                 </div>

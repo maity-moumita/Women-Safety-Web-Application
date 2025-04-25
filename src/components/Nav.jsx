@@ -29,14 +29,13 @@ const Nav = () => {
     ? [
         { name: "Home", path: "/" },
         { name: "Dashboard", path: "/dashboard" },
-        { name: "Features", path: "/feature" },
-        { name: "User Details", path:"/user-details" },
+        { name: "Features", path: "/feature-login" },
         { name: "Logout", onClick: handleLogout },
         
       ]
     : [
         { name: "Home", path: "/" },
-        { name: "Features", path: "/feature" },
+        { name: "Features", path: "/feature-without-login" },
         { name: "Sign Up", path: "/sign-up" },
         ...(providers
           ? Object.values(providers).map((provider) => ({
