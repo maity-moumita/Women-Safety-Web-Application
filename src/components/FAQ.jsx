@@ -5,8 +5,8 @@ import { useState } from "react";
 const FrequentlyAskedQuestions = () => {
     return (
         <div className="mt-10 ml-4">
-            <h1 className="text-3xl md:text-4xl md:text-center">Frequently Asked</h1>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#771931] to-[#00466f] bg-clip-text text-transparent md:text-5xl md:text-center">
+            <h1 className="text-3xl md:text-4xl md:text-center ml-10">Frequently Asked</h1>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#771931] to-[#00466f] bg-clip-text text-transparent md:text-5xl md:text-center ml-10">
                 Questions
             </h1>
             <div className="mt-10 bg-black bg-opacity-70 rounded-lg shadow-lg p-6 md:flex md:flex-wrap md:gap-6 md:justify-center">
