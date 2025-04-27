@@ -7,7 +7,7 @@ const Feature = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans p-6 flex flex-col items-center justify-center space-y-10">
-      
+
       {/* Header */}
       <header className="text-center">
         <h1 className="text-4xl font-bold mb-2">🆘 Emergency Features</h1>
@@ -56,7 +56,7 @@ const Feature = () => {
       </section>
 
       {/* Emergency Contacts (With SOS Route) */}
-      <section className="w-full max-w-xl bg-gray-900 rounded-2xl p-6 shadow-lg border border-gray-700">
+      {/* <section className="w-full max-w-xl bg-gray-900 rounded-2xl p-6 shadow-lg border border-gray-700">
         <h2 className="text-2xl font-semibold mb-2">👨‍👩‍👧 Emergency Contacts</h2>
         <p className="text-gray-300 mb-4">
           Notify your trusted circle in seconds. Instantly alert them with a message and your live location when you need help.
@@ -72,7 +72,7 @@ const Feature = () => {
         >
           Send Alert
         </button>
-      </section>
+      </section> */}
 
       {/* SafeRide Alert */}
       <section className="w-full max-w-xl bg-gray-900 rounded-2xl p-6 shadow-lg border border-gray-700">
