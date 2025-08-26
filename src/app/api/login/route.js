@@ -11,28 +11,28 @@ export async function POST(req) {
     const { email, password } = body;
 
     if (!email || !password) {
-      return NextResponse.json({ message: "Invalid Email or Password" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "Missing email or password" }, { status: 200 });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json({ message: "User does not exist" }, { status: 400 });
+      return NextResponse.json({ success: false, message: "User does not exist" }, { status: 200 });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
+      return NextResponse.json({ success: false, message: "Invalid credentials" }, { status: 200 });
     }
 
-    // Return user object with necessary fields for NextAuth
+    // ✅ Valid user found
     return NextResponse.json({
+      success: true,
       id: user._id.toString(),
       name: user.name,
       email: user.email,
-    }, { status: 200 });
-
+    });
   } catch (error) {
     console.error("❌ Login Error:", error);
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
   }
 }
