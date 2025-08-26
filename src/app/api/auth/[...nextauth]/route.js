@@ -11,31 +11,29 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const res = await fetch(`http://localhost:3000/api/login`, {
+          const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
+          const res = await fetch(`${baseUrl}/api/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials?.email,
-              password: credentials?.password,
-            }),
+            body: JSON.stringify(credentials),
           });
 
-          const user = await res.json();
+          const data = await res.json();
 
-          // Only allow login if email exists in the response
-          if (!res.ok || !user?.email) return null;
+          if (!data.success) return null; // ❌ Login failed
 
-          // Only return email
           return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
+            id: data.id,
+            name: data.name,
+            email: data.email,
           };
         } catch (err) {
           console.error("❌ Error in authorize:", err);
           return null;
         }
-      },
+      }
+
     }),
   ],
   session: {
@@ -44,7 +42,7 @@ const handler = NextAuth({
     updateAge: 24 * 60 * 60,   // optional: revalidate session every 24 hours
   },
   jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 🔐 Make sure JWT token also lasts 30 days (in seconds)
+    maxAge: 30 * 24 * 60 * 60, // 🔐 Ensure JWT lasts 30 days too
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
@@ -59,7 +57,7 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       if (token?.email) {
-        session.user = { email: token.email }; // Only keep email
+        session.user = { email: token.email }; // ✅ Only keep email
       }
       return session;
     },
