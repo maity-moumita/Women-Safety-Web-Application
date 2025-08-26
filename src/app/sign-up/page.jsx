@@ -19,7 +19,7 @@ const Signup = () => {
       .then((res) => {
         if (res.status === 201) {
           alert("Signup successful! Redirecting to login...");
-          router.push("/login");
+          router.push("/dashboard");
         }
       })
       .catch((err) => {
