@@ -19,30 +19,35 @@ const handler = NextAuth({
             body: JSON.stringify(credentials),
           });
 
-          const data = await res.json();
+          if (!res.ok) {
+            // ❌ login failed (400/401)
+            return null;
+          }
 
-          if (!data.success) return null; // ❌ Login failed
+          const user = await res.json();
 
-          return {
-            id: data.id,
-            name: data.name,
-            email: data.email,
-          };
+          // ✅ must return { id, name, email }
+          return user?.email
+            ? {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+              }
+            : null;
         } catch (err) {
           console.error("❌ Error in authorize:", err);
           return null;
         }
-      }
-
+      },
     }),
   ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 🕒 30 days (in seconds)
-    updateAge: 24 * 60 * 60,   // optional: revalidate session every 24 hours
+    maxAge: 30 * 24 * 60 * 60, // 🕒 30 days
+    updateAge: 24 * 60 * 60,   // revalidate session every 24h
   },
   jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 🔐 Ensure JWT lasts 30 days too
+    maxAge: 30 * 24 * 60 * 60, // 🔐 JWT lasts 30 days
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
@@ -57,7 +62,7 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       if (token?.email) {
-        session.user = { email: token.email }; // ✅ Only keep email
+        session.user = { email: token.email }; // ✅ only keep email
       }
       return session;
     },

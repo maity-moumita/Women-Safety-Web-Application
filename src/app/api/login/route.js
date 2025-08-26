@@ -7,32 +7,45 @@ export async function POST(req) {
   try {
     await connectToDB();
 
-    const body = await req.json();
-    const { email, password } = body;
+    const { email, password } = await req.json();
 
     if (!email || !password) {
-      return NextResponse.json({ success: false, message: "Missing email or password" }, { status: 200 });
+      return NextResponse.json(
+        { error: "Missing email or password" },
+        { status: 400 }
+      );
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json({ success: false, message: "User does not exist" }, { status: 200 });
+      return NextResponse.json(
+        { error: "User does not exist" },
+        { status: 401 } // unauthorized
+      );
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return NextResponse.json({ success: false, message: "Invalid credentials" }, { status: 200 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
-    // ✅ Valid user found
-    return NextResponse.json({
-      success: true,
-      id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-    });
+    // ✅ Success → return user object (NextAuth will use this)
+    return NextResponse.json(
+      {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("❌ Login Error:", error);
-    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
