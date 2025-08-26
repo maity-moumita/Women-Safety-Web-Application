@@ -9,19 +9,23 @@ const handler = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         try {
-          const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+          // ✅ dynamically resolve base URL (works in prod & dev)
+          const origin =
+            process.env.NODE_ENV === "production"
+              ? process.env.NEXTAUTH_URL
+              : "http://localhost:3000";
 
-          const res = await fetch(`${baseUrl}/api/login`, {
+          const res = await fetch(`${origin}/api/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(credentials),
           });
 
+
           if (!res.ok) {
-            // ❌ login failed (400/401)
-            return null;
+            return null; // ❌ login failed
           }
 
           const user = await res.json();
@@ -29,10 +33,10 @@ const handler = NextAuth({
           // ✅ must return { id, name, email }
           return user?.email
             ? {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-              }
+              id: user.id,
+              name: user.name,
+              email: user.email,
+            }
             : null;
         } catch (err) {
           console.error("❌ Error in authorize:", err);
@@ -43,11 +47,11 @@ const handler = NextAuth({
   ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 🕒 30 days
+    maxAge: 30 * 24 * 60 * 60, // 30 days
     updateAge: 24 * 60 * 60,   // revalidate session every 24h
   },
   jwt: {
-    maxAge: 30 * 24 * 60 * 60, // 🔐 JWT lasts 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
@@ -55,15 +59,11 @@ const handler = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user?.email) {
-        token.email = user.email;
-      }
+      if (user?.email) token.email = user.email;
       return token;
     },
     async session({ session, token }) {
-      if (token?.email) {
-        session.user = { email: token.email }; // ✅ only keep email
-      }
+      if (token?.email) session.user = { email: token.email };
       return session;
     },
   },
