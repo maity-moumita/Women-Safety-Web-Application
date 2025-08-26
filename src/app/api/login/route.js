@@ -1,51 +1,30 @@
 import { NextResponse } from "next/server";
-import connectToDB from "@/lib/dbConnect";
 import bcrypt from "bcryptjs";
+import connectToDB from "@/lib/dbConnect";
 import User from "@/models/User";
 
 export async function POST(req) {
   try {
     await connectToDB();
-
     const { email, password } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Missing email or password" },
-        { status: 400 }
-      );
-    }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json(
-        { error: "User does not exist" },
-        { status: 401 } // unauthorized
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    // ✅ Success → return user object (NextAuth will use this)
-    return NextResponse.json(
-      {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    });
   } catch (error) {
-    console.error("❌ Login Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error("Login error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
